@@ -2,10 +2,9 @@ export default function page({ params }: {
     params: { id: string }
 }) {
     return (
-        <>
-            <h2 className='text-xl mb-3'>{ params.id }</h2>
-            <div>사진 영역</div>
-            <div>내용</div>
-        </>
+        <div className='flex gap-4 mt-7'>
+            <div className='w-7/12 h-[466px] flex justify-center items-center bg-slate-400'>{ params.id }</div>
+            <div className='w-auto'>글 내용 내용</div>
+        </div>
     )
 }
