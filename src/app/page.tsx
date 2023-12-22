@@ -10,7 +10,7 @@ export default function Home() {
                 {
                     test_data.map(n => (
                         <li className='h-[261px] bg-black flex'>
-                            <Link href={`/post/${n}`} className='w-full h-full text-white text-4xl'>{ n }</Link>
+                            <Link href={`/post/${n}`} scroll={false} className='w-full h-full text-white text-4xl'>{ n }</Link>
                         </li>
                     ))
                 }
