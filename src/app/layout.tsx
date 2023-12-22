@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
-import WriteIcon from './components/WriteIcon'
+import WriteIcon from '../components/WriteIcon'
 
 import { Inter, Sevillana } from 'next/font/google'
 
