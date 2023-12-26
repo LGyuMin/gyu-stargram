@@ -14,6 +14,8 @@ export default function Modal({ children }: { children: React.ReactNode }) {
     const onClick: MouseEventHandler = useCallback((e) => {
         if (e.target === overlay.current || e.target === wrapper.current) {
             if (dimissModal) dimissModal();
+        } else {
+            window.location.reload()
         }
     }, [dimissModal, overlay, wrapper])
 

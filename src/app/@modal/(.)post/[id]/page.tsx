@@ -1,11 +1,13 @@
 import Modal from '@/components/Modal'
+import { IPost } from '@/types'
 
-export default function page({ params }: { params: {id: string} }) {
+export default async function page({ params }: { params: {id: string} }) {
+    const res = await fetch(`http://localhost:9999/posts/${params.id}`)
+    const post: IPost = await res.json()
     return (
         <Modal>
-            <div className='flex gap-4 w-[800px] bg-white mx-auto'>
-                <div className='w-7/12 h-[466px] flex justify-center items-center bg-slate-400'>{ params.id }</div>
-                <div className='w-auto py-4'>글 내용 내용</div>
+            <div className='w-[450px] h-[450px] bg-white mx-auto cursor-pointer'>
+                <img className='object-cover aspect-square' src={post.imageSrc} alt="post image" />
             </div>
         </Modal>
     )
