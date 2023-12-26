@@ -1,34 +1,70 @@
 'use client'
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useRef, useState } from 'react';
+import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 
 const aTagClassName = 'text-xs text-gray-500 hover:underline hover:text-gray-400';
 
 export default function page() {
-    const [img, setImg] = useState('')
-    const imgInputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
+    const router = useRouter()
+    const [imageSrc, setImageSrc] = useState('')
+    const [content, setContent] = useState('')
+    const imgInputRef = useRef() as React.MutableRefObject<HTMLInputElement>
 
-    const setImage = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        let { files } = e.target;
-        if (files === null) return;
+    const changeImage = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        let { files } = e.target
+        if (files === null) return
 
         if (!files[0].name.match(/(.*?).(bmp|jpg|jpeg|gif|png)/)) {
-            alert('it is not a file')
+            alert('사진만 업로드 가능합니다.')
         } 
 
-        const reader = new FileReader();
-        reader.readAsDataURL(files[0]);
+        const reader = new FileReader()
+        reader.readAsDataURL(files[0])
 
         reader.onloadend = () => {
-            setImg(reader.result as string);
+            setImageSrc(reader.result as string)
         };
     }, [])
 
-    const onBtnClick = () => {
+    const openImageUploadModal = useCallback(() => {
         imgInputRef.current.click()
-    }
+    }, [])
+
+    const savePost = useCallback(() => {
+        if (imageSrc.length === 0) {
+            alert('사진을 선택해주세요.')
+            return
+        }
+
+        if (content.trim().length === 0) {
+            alert('내용을 입력해주세요.')
+            return
+        }
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                imageSrc,
+                content,
+                createdAt: dayjs().format('YYYY-MM-DD')
+            })
+        }
+
+        fetch('http://localhost:9999/posts', options)
+        .then(res => res.json())
+        .then(result => {
+            const lastId = result.id;
+            router.refresh();
+            router.push(`/`);
+        })
+        
+    }, [imageSrc, content])
 
     return (
         <div className='py-4 flex flex-col gap-3'>
@@ -40,15 +76,15 @@ export default function page() {
                         accept='.jpg, .jpeg, .png' 
                         className='hidden' 
                         ref={imgInputRef} 
-                        onChange={setImage}
+                        onChange={changeImage}
                     />
                     <button 
                         className='w-full h-full flex justify-center items-center'
-                        onClick={onBtnClick}
+                        onClick={openImageUploadModal}
                     >
                         {
-                            img ?
-                                <img src={img} alt="image preview" />
+                            imageSrc ?
+                                <img src={imageSrc} alt="image preview" />
                             :
                                 <svg 
                                     className="h-40 w-40 text-gray-300 hover:border-gray-200 hover:text-gray-200"  
@@ -67,11 +103,14 @@ export default function page() {
                 </div>
                 <textarea
                     className='w-[calc(100%-200px)] border h-[200px] overflow-y-scroll resize-none p-2 rounded outline-1 outline-blue-500/50'
-                    placeholder='내용을 입력하세요.' 
+                    placeholder='내용을 입력하세요.'
+                    value={content}
+                    onChange={({target}) => setContent(target.value) }
+                    maxLength={200}
                 />
             </div>
             <div className='flex gap-2 justify-end'>
-                <a href="#" className={aTagClassName}>Save</a>
+                <a href="#" className={aTagClassName} onClick={savePost}>Save</a>
                 <Link href='/' className={aTagClassName}>Cancle</Link>
             </div>
         </div>
