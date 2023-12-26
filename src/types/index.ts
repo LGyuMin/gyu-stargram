@@ -1,6 +1,6 @@
 export interface IPost {
     id: number
-    contetn: string
+    content: string
     imageSrc: string
     createdAt: string
 }
